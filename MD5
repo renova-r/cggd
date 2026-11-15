@@ -1,0 +1,16 @@
+eeda5d5ed1c522606117dff33e47dd7c *DESCRIPTION
+72c55812d8e0c77038f62145395c4f42 *INDEX
+4276cadc2e01da1b65aa47590ba17ba3 *NAMESPACE
+7e3985aed1edd297ed721fa51cd9ca01 *R/cggd.r
+70daba81d4974c2d36bc5c0c883c435f *data/OJ.RData
+886dbacb37380f2e60f9dd109484dac2 *data/Wine.RData
+dd3266e078ea9b47c7c5180fb75dadc0 *data/housing.RData
+41db63b682201420a5c92144526499f0 *man/OJ.Rd
+8faa180bb112ecd2d9343c39130470ee *man/Wine.Rd
+cd3f75318b6d790aa8318f1036488845 *man/cggd-internal.Rd
+80cd3b04d2c8b8134d94b33ef5a3d3a3 *man/cggd.Rd
+c28c2ee0a53b0fe4db661fba48b31b3f *man/cv.cggd.Rd
+faa95473254e9d7a0dc69466f2ea79d2 *man/housing.Rd
+4aa477eb3d5d122c7c5c607a3f8bee89 *man/plot.cggd.Rd
+dfaa3aef03138770a6bbab61c0ab9583 *man/predict.cggd.Rd
+30efc11ea473422278972f70d494e4b8 *try1.r

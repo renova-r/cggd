@@ -1,0 +1,10 @@
+cggd                    Fits Continuous Generalized Gradient Descent
+                        models
+cv.cggd                 Computes K-fold cross-validated error curve for
+                        cggd
+housing                 Covariates related to housing prices
+OJ                      OJ
+plot.cggd               Plot method for cggd objects
+predict.cggd            Make predictions or extract coefficients from a
+                        fitted cggd model
+Wine                    Wine
