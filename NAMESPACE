@@ -11,3 +11,7 @@ import(
   stats,
   utils
 )
+
+# Register S3 methods
+S3method(plot, cggd)
+S3method(predict, cggd)

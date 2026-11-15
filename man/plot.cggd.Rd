@@ -5,7 +5,8 @@
 Produce a plot of a cggd fit. The default is a complete coefficient path.
 }
 \usage{
-plot.cggd(x, steps=5, breaks = TRUE, first_k=1,last_k=Inf, xvar=c("step","t"),omit.zeros = TRUE, eps = 1e-10, ...)
+\method{plot}{cggd}(x, steps=5, breaks = TRUE, first_k=1,last_k=Inf,
+     xvar=c("step","t"),omit.zeros = TRUE, eps = 1e-10, ...)
 }
 \arguments{
   \item{x}{cggd object}

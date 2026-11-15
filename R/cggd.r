@@ -186,9 +186,15 @@ get.switch.time <- function(switch.func,e, boundary=0,terminate_value=1e15,tol =
  # can further optimize by figuering out it is in the m.in or m.out and only doing those
  # can also check which variables in particular are negative and only do it for them
  if( res$value <0  && res$par !=last_boundary) {
-     r<-uniroot(f=switch.func,int=c(last_boundary,boundary),lower=last_boundary,upper=boundary,maxiter=1000,tol=tol,e)
+     r<-uniroot(f=switch.func,interval=c(last_boundary,boundary),lower=last_boundary,upper=boundary,maxiter=1000,tol=tol,e)
 
-     switch.time <- r$root + r$estim.prec 
+     # r$estim.prec is zeroin's final bracket width |c-b|, an approximate precision. On a normal exit it is
+     # <= 2*tol_act = 4*eps*|root| + tol; on zeroin's exact-zero early exit it is the stale, possibly coarse bracket
+     # width. Bound the step past the root by the normal-exit width (identical on every normal exit, and always a
+     # representable advance); if the bounded step does not strictly cross (switch.func >= 0), keep the original step.
+     step <- min(r$estim.prec, 4*.Machine$double.eps*abs(r$root) + tol)
+     if (isTRUE(step < r$estim.prec) && switch.func(r$root + step, e) >= 0) step <- r$estim.prec
+     switch.time <- r$root + step 
  }
 
  return(list(switch.time=switch.time,success=TRUE))
@@ -523,7 +529,7 @@ plot.cggd <- function(x, steps=5, breaks = TRUE, first_k=1,last_k=Inf, xvar=c("s
       else {
         tm <- o$tk[k-1] + i*(o$tk[k]-o$tk[k-1])/(steps+1)
       }
-      r=gen.beta(tm,my.env)
+      r=my.env$gen.beta(tm,my.env)
       b[o$a.set[,k-1],j] <- r$beta[o$a.set[,k-1]]
       s[j] <- tm + s_cum_tk
       j <- j+1
@@ -561,7 +567,7 @@ plot.cggd <- function(x, steps=5, breaks = TRUE, first_k=1,last_k=Inf, xvar=c("s
           pch = "*", ylab = "Coefficients")
   #title(object$type,line=2.5)
   abline(h = 0, lty = 3)
-  axis(4, at = b[nrow(b),  ], label = paste(cnums
+  axis(4, at = b[nrow(b),  ], labels = paste(cnums
                                         ), cex = 0.80000000000000004, adj = 0)
   if(breaks) {
     axis(3, at = brk, labels = paste(round(brk,digits=2)),cex=.8)
@@ -584,10 +590,11 @@ plot.cggd <- function(x, steps=5, breaks = TRUE, first_k=1,last_k=Inf, xvar=c("s
 predict.cggd <- function(object, newx, t, type = c("fit", "coefficients"), mode=c("k","t"), ...)
 {
   o<-object
+  type <- match.arg(type); mode <- match.arg(mode)
   # check parameters
   
   
-  if( (mode=="t" &&( t < o$min.tk || t> max.tk) ) || (mode=="k" && ( t <1 ||t > length(o$tk))))
+  if( (mode=="t" &&( t < o$min.tk || t> o$max.tk) ) || (mode=="k" && ( t <1 ||t > length(o$tk))))
     { stop("t out of range.") }
   
   # find coefficients
@@ -614,7 +621,7 @@ predict.cggd <- function(object, newx, t, type = c("fit", "coefficients"), mode=
         cggd.trr.var.init(x=o$x,y=o$y, a.set=o$a.set.tk[,it],beta_init=o$beta.tk[,it], e=my.env )      
         tm <- o$tk[it] + (t-it)*(o$tk[it+1]-o$tk[it])
       }
-      r <- gen.beta(tm,my.env)
+      r <- my.env$gen.beta(tm,my.env)
       beta <- r$beta
     }
   }
@@ -634,7 +641,7 @@ predict.cggd <- function(object, newx, t, type = c("fit", "coefficients"), mode=
         if(s>t)
         {
           cggd.mgd.var.init(x=o$x,y=o$y, a.set=o$a.set.tk[,k-1],beta_init=o$beta.tk[,k-1], alpha1=o$alpha1, alpha2=o$alpha2, w=o$w, e=my.env )      
-          r <- gen.beta(t-(s-o$a.set.tk[,k-1]), my.env)
+          r <- my.env$gen.beta(t-(s-o$tk[k]), my.env)
           beta <- r$beta
           break
         }
@@ -653,7 +660,7 @@ predict.cggd <- function(object, newx, t, type = c("fit", "coefficients"), mode=
         {       
           t0 <- o$tk[k-1]
           cggd.trr.var.init(x=o$x,y=o$y, a.set=o$a.set.tk[,k-1],beta_init=o$beta.tk[,k-1], e=my.env )      
-          r <- gen.beta(t,my.env)
+          r <- my.env$gen.beta(t,my.env)
           beta <- r$beta
           break
         }
@@ -725,13 +732,12 @@ function(x, y, nfolds = 6, kmax=40 ,
 
 plotCVcggd <-
 function(cv.lars.object,se=TRUE){
-  attach(cv.lars.object)
+  cv <- cv.lars.object$cv; cv.error <- cv.lars.object$cv.error
       plot(1:length(cv), cv, type = "b", ylim = range(cv, cv + cv.error, 
                                      cv - cv.error),xlab="step")
     if(se)
       error.bars(1:length(cv), cv + cv.error, cv - cv.error, 
                  width = 1/length(cv))
-  detach(cv.lars.object)
   
 invisible()
 }

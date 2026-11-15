@@ -5,7 +5,7 @@
 \description{
  The \code{housing} data frame has 506 rows and 13 attributes.
 }
-\usage{housing}
+\usage{data(housing)}
 \format{
   This data frame contains the following columns:
   \describe{

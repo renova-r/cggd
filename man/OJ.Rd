@@ -6,7 +6,7 @@
 \description{
  The \code{OJ} datafile has both learning and test data.
 }
-\usage{OJ}
+\usage{data(OJ)}
 \format{
   This data file contains the following items:
   \describe{

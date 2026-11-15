@@ -6,7 +6,7 @@
 \description{
  The \code{Wine} data file has both learning and test data.
 }
-\usage{Wine}
+\usage{data(Wine)}
 \format{
   This data file contains the following items:
   \describe{
